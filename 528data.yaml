@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 5
+names: ['gloves', 'miss', 'pad', 'person', 'punch']
+
+roboflow:
+  workspace: dani-j0cok
+  project: boxing-lelg6
+  version: 1
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/dani-j0cok/boxing-lelg6/dataset/1
