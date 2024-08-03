@@ -1,11 +1,17 @@
 from flask import request, jsonify
 from app import app, db
-from app.models import model, Fighter, Match, FighterScore
+from app.models import Fighter, Match, FighterScore
 from datetime import datetime
 from sqlalchemy import desc
 import base64
 import cv2
 import numpy as np
+from roboflow import Roboflow
+from dotenv import load_dotenv
+import os
+
+# Load environment variables from .env file
+load_dotenv()
 
 def decode_image(image_base64):
     image_data = base64.b64decode(image_base64.split(',')[1])
@@ -13,15 +19,26 @@ def decode_image(image_base64):
     img = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
     return img
 
+# Create an inference client using the API key from environment variables
+rf = Roboflow(api_key=os.getenv("ROBOFLOW_API_KEY"))
+project = rf.workspace().project("boxing-lelg6")
+model = project.version(3).model
+
 @app.route('/process_frame', methods=['POST'])
 def process_frame():
     data = request.json
     image = decode_image(data['image'])
-    results = model(image)
+    
+    # Save the image to a temporary file
+    temp_image_path = "temp_image.jpg"
+    cv2.imwrite(temp_image_path, image)
+    
+    # Run inference on the saved image
+    results = model.predict(temp_image_path).json()
 
     # Do something with the results
     # For example, you can return the number of detected objects
-    return jsonify({'detections': len(results)})
+    return jsonify({'detections': len(results['predictions'])})
 
 @app.route('/fighter', methods=['POST'])
 def create_fighter():
@@ -87,7 +104,6 @@ def update_score(match_id):
     match.fighter2_score.hits = data['scores']['fighter2']['hits']
     db.session.commit()
     return jsonify({"message": "Score updated successfully"}), 200
-
 
 @app.route('/matches/recent', methods=['GET'])
 def get_recent_matches():
