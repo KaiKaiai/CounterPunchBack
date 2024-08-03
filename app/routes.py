@@ -1,6 +1,5 @@
-from flask import Flask, render_template, Response, request, jsonify
+from flask import Blueprint, render_template, Response, request, jsonify
 from app import app, db
-from app.models import Fighter, Match, FighterScore
 from datetime import datetime
 from sqlalchemy import desc
 import base64
@@ -8,6 +7,8 @@ import cv2
 import numpy as np
 
 from inference_sdk import InferenceHTTPClient
+
+main = Blueprint('main', __name__)
 
 # Initialize InferenceHTTPClient
 CLIENT = InferenceHTTPClient(api_url="https://detect.roboflow.com",
@@ -65,14 +66,14 @@ def generate_frames():
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
-@app.route('/process_frame', methods=['POST'])
+@main.route('/process_frame', methods=['POST'])
 def process_frame():
     data = request.json
     image = decode_image(data['image'])
     results = CLIENT.infer(image, model_id="boxing-lelg6/3")
     return jsonify({'detections': results})
 
-@app.route('/fighter', methods=['POST'])
+@main.route('/fighter', methods=['POST'])
 def create_fighter():
     data = request.json
     new_fighter = Fighter(name=data['name'], country=data['country'], avatarURL=data['avatarURL'])
@@ -80,7 +81,7 @@ def create_fighter():
     db.session.commit()
     return jsonify({"id": new_fighter.id}), 201
 
-@app.route('/match', methods=['POST'])
+@main.route('/match', methods=['POST'])
 def create_match():
     data = request.json
     new_match = Match(
@@ -95,7 +96,7 @@ def create_match():
     db.session.commit()
     return jsonify({"id": new_match.id}), 201
 
-@app.route('/match/<int:match_id>', methods=['GET'])
+@main.route('/match/<int:match_id>', methods=['GET'])
 def get_match(match_id):
     match = Match.query.get_or_404(match_id)
     return jsonify({
@@ -126,7 +127,7 @@ def get_match(match_id):
         }
     })
 
-@app.route('/match/<int:match_id>/score', methods=['PUT'])
+@main.route('/match/<int:match_id>/score', methods=['PUT'])
 def update_score(match_id):
     match = Match.query.get_or_404(match_id)
     data = request.json
@@ -137,7 +138,7 @@ def update_score(match_id):
     db.session.commit()
     return jsonify({"message": "Score updated successfully"}), 200
 
-@app.route('/matches/recent', methods=['GET'])
+@main.route('/matches/recent', methods=['GET'])
 def get_recent_matches():
     recent_matches = Match.query.order_by(desc(Match.datetime)).limit(5).all()
     matches_data = []
@@ -171,6 +172,6 @@ def get_recent_matches():
         })
     return jsonify(matches_data), 200
 
-@app.route('/video_feed')
+@main.route('/video_feed')
 def video_feed():
     return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
