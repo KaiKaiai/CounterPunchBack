@@ -1,7 +1,7 @@
 import os
 from flask import Flask, render_template, Response, request, jsonify
 from app import app, db
-from app.models import model, Fighter, Match, FighterScore
+from app.models import Fighter, Match, FighterScore
 from datetime import datetime
 from sqlalchemy import desc
 import base64
