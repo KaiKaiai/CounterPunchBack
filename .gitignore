@@ -40,7 +40,6 @@ matches.db
 
 # Logs and temporary files
 *.log
-*.txt
 *.out
 *.err
 .DS_Store
