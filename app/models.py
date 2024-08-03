@@ -1,3 +1,5 @@
+import os
+from ultralytics import YOLO
 # database stuff
 
 from app import db
