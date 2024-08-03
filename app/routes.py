@@ -7,17 +7,30 @@ from sqlalchemy import desc
 import base64
 import cv2
 import numpy as np
+
 from inference_sdk import InferenceHTTPClient
 
 # Import the API key from the environment variables
 CLIENT = InferenceHTTPClient(api_url="https://detect.roboflow.com",
                              api_key="IhnzMIPA02sn9csVky59")
 
+from roboflow import Roboflow
+from dotenv import load_dotenv
+import os
+
+# Load environment variables from .env file
+load_dotenv()
+
 def decode_image(image_base64):
     image_data = base64.b64decode(image_base64.split(',')[1])
     np_arr = np.frombuffer(image_data, np.uint8)
     img = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
     return img
+
+# Create an inference client using the API key from environment variables
+rf = Roboflow(api_key=os.getenv("ROBOFLOW_API_KEY"))
+project = rf.workspace().project("boxing-lelg6")
+model = project.version(3).model
 
 @app.route('/process_frame', methods=['POST'])
 def process_frame():
@@ -26,6 +39,7 @@ def process_frame():
     results = CLIENT.infer(image, model_id="boxing-lelg6/3")
     # Do something with the results
     return jsonify({'detections': results})
+
 
 @app.route('/fighter', methods=['POST'])
 def create_fighter():
