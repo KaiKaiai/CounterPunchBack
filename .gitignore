@@ -44,4 +44,4 @@ matches.db
 *.err
 .DS_Store
 
-.env
+*.env
