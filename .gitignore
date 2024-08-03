@@ -30,3 +30,15 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
+
+# Large files
+*.pt
+*.h5
+*.weights
+
+# Logs and temporary files
+*.log
+*.txt
+*.out
+*.err
+.DS_Store
