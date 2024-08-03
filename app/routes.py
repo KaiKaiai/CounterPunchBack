@@ -20,6 +20,7 @@ import os
 
 # Load environment variables from .env file
 load_dotenv()
+ROBOFLOW_API_KEY = os.environ.get("ROBOFLOW_API_KEY")
 
 def decode_image(image_base64):
     image_data = base64.b64decode(image_base64.split(',')[1])
