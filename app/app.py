@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
-from app.config import Config
+from config import Config
 from dotenv import load_dotenv
 import os
 
@@ -23,7 +23,13 @@ rf = Roboflow(api_key=ROBOFLOW_API_KEY)
 project = rf.workspace().project("boxing-lelg6")
 model = project.version(3).model
 
-from app import routes, models
+# Import models and routes
+import models, routes
+from routes import main as main_blueprint
+app.register_blueprint(main_blueprint)
 
 with app.app_context():
     db.create_all()
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=8000)
