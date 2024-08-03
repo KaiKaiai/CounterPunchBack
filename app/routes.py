@@ -29,7 +29,7 @@ def decode_image(image_base64):
     return img
 
 # Create an inference client using the API key from environment variables
-rf = Roboflow(api_key=os.getenv("ROBOFLOW_API_KEY"))
+rf = Roboflow(ROBOFLOW_API_KEY)
 project = rf.workspace().project("boxing-lelg6")
 model = project.version(3).model
 
