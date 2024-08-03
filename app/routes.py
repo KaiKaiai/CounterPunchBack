@@ -1,5 +1,5 @@
 from flask import request, jsonify
-from CounterPunchBack.app.app import app, db
+from app import app, db
 from app.models import model, Fighter, Match, FighterScore
 from datetime import datetime
 from sqlalchemy import desc
