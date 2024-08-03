@@ -9,7 +9,7 @@ CORS(app)  # Enable CORS to allow requests from the React frontend
 app.config.from_object(Config)
 db = SQLAlchemy(app)
 
-from . import routes, models
+from app import routes, models
 
 with app.app_context():
     db.create_all()

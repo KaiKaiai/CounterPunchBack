@@ -43,3 +43,5 @@ matches.db
 *.out
 *.err
 .DS_Store
+
+.env
