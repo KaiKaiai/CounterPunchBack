@@ -12,7 +12,7 @@ model = YOLO(model_path)
 
 # database stuff
 
-from CounterPunchBack.app.app import db
+from app import db
 from datetime import datetime
 
 class Fighter(db.Model):
