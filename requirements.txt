@@ -18,7 +18,7 @@ kiwisolver==1.4.5
 MarkupSafe==2.1.5
 matplotlib==3.5.1
 mpmath==1.3.0
-networkx==2.8.8g
+networkx==2.8.8
 numpy==1.24.3
 opencv-python==4.10.0.84
 opencv-python-headless==4.10.0.84
