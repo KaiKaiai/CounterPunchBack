@@ -1,19 +1,13 @@
 from flask import Blueprint, render_template, Response, request, jsonify
-from flask_sqlalchemy import SQLAlchemy
-from app import app, db
+from extensions import db  # Import db from app.py
 from datetime import datetime
 from sqlalchemy import desc
 import base64
 import cv2
 import numpy as np
 from models import Match, FighterScore, Fighter
-
-
 from inference_sdk import InferenceHTTPClient
-
-
 main = Blueprint('main', __name__)
-app.register_blueprint(main)
 
 # Initialize InferenceHTTPClient
 CLIENT = InferenceHTTPClient(api_url="https://detect.roboflow.com",
@@ -176,6 +170,19 @@ def get_recent_matches():
             }
         })
     return jsonify(matches_data), 200
+
+@main.route('/fighter/<int:fighter_id>', methods=['GET'])
+def get_fighter(fighter_id):
+    fighter = Fighter.query.get_or_404(fighter_id)
+    
+    fighter_data = {
+        "id": fighter.id,
+        "name": fighter.name,
+        "country": fighter.country,
+        "avatarURL": fighter.avatarURL
+    }
+    
+    return jsonify(fighter_data), 200
 
 @main.route('/video_feed')
 def video_feed():
