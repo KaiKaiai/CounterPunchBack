@@ -171,6 +171,19 @@ def get_recent_matches():
         })
     return jsonify(matches_data), 200
 
+@main.route('/fighter/<int:fighter_id>', methods=['GET'])
+def get_fighter(fighter_id):
+    fighter = Fighter.query.get_or_404(fighter_id)
+    
+    fighter_data = {
+        "id": fighter.id,
+        "name": fighter.name,
+        "country": fighter.country,
+        "avatarURL": fighter.avatarURL
+    }
+    
+    return jsonify(fighter_data), 200
+
 @main.route('/video_feed')
 def video_feed():
     return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
