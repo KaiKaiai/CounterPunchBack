@@ -1,26 +1,34 @@
 from flask import Flask
 from flask_cors import CORS
-from flask_sqlalchemy import SQLAlchemy
 from config import Config
+from extensions import db
 from dotenv import load_dotenv
 import os
 
-# Load environment variables from .env file
-load_dotenv()
+def create_app():
+    load_dotenv()
+    
+    app = Flask(__name__)
+    CORS(app)
+    app.config.from_object(Config)
+    
+    db.init_app(app)
+    
+    ROBOFLOW_API_KEY = os.environ.get("ROBOFLOW_API_KEY")
+    if not ROBOFLOW_API_KEY:
+        raise RuntimeError("ROBOFLOW_API_KEY environment variable is not set.")
+    
+    from roboflow import Roboflow
+    rf = Roboflow(api_key=ROBOFLOW_API_KEY)
+    project = rf.workspace().project("boxing-lelg6")
+    model = project.version(3).model
+    
+    from routes import main as main_blueprint
+    app.register_blueprint(main_blueprint)
+    
+    return app
 
-app = Flask(__name__)
-CORS(app)  # Enable CORS to allow requests from the React frontend
-app.config.from_object(Config)
-
-# Import Roboflow API key and initialize Roboflow client
-ROBOFLOW_API_KEY = os.environ.get("ROBOFLOW_API_KEY")
-if not ROBOFLOW_API_KEY:
-    raise RuntimeError("ROBOFLOW_API_KEY environment variable is not set.")
-
-from roboflow import Roboflow
-rf = Roboflow(api_key=ROBOFLOW_API_KEY)
-project = rf.workspace().project("boxing-lelg6")
-model = project.version(3).model
+app = create_app()
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8000)
+    app.run(host='0.0.0.0', port=8000, debug=True)

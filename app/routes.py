@@ -1,19 +1,13 @@
 from flask import Blueprint, render_template, Response, request, jsonify
-from flask_sqlalchemy import SQLAlchemy
-from app import app, db
+from extensions import db  # Import db from app.py
 from datetime import datetime
 from sqlalchemy import desc
 import base64
 import cv2
 import numpy as np
 from models import Match, FighterScore, Fighter
-
-
 from inference_sdk import InferenceHTTPClient
-
-
 main = Blueprint('main', __name__)
-app.register_blueprint(main)
 
 # Initialize InferenceHTTPClient
 CLIENT = InferenceHTTPClient(api_url="https://detect.roboflow.com",
