@@ -4,6 +4,7 @@ from config import Config, basedir
 from extensions import db
 from dotenv import load_dotenv
 import os
+import models
 
 def create_app():
     load_dotenv()
@@ -14,6 +15,8 @@ def create_app():
     CORS(app, resources={"*": {"origins": "*"}})
     
     db.init_app(app)
+    with app.app_context():
+        db.create_all()
     
     ROBOFLOW_API_KEY = os.environ.get("ROBOFLOW_API_KEY")
     if not ROBOFLOW_API_KEY:
