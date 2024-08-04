@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_cors import CORS
-from config import Config
+from config import Config, basedir
 from extensions import db
 from dotenv import load_dotenv
 import os
@@ -9,8 +9,9 @@ def create_app():
     load_dotenv()
     
     app = Flask(__name__)
-    CORS(app)
     app.config.from_object(Config)
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'matches.db')
+    CORS(app, resources={"*": {"origins": "*"}})
     
     db.init_app(app)
     
