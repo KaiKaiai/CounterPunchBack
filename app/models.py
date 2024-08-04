@@ -1,5 +1,11 @@
-from app import db
+
 from datetime import datetime
+from flask_sqlalchemy import SQLAlchemy
+from app import app
+
+db = SQLAlchemy(app)
+with app.app_context():
+    db.create_all()
 
 class Fighter(db.Model):
     id = db.Column(db.Integer, primary_key=True)

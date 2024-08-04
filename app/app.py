@@ -11,7 +11,6 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app)  # Enable CORS to allow requests from the React frontend
 app.config.from_object(Config)
-db = SQLAlchemy(app)
 
 # Import Roboflow API key and initialize Roboflow client
 ROBOFLOW_API_KEY = os.environ.get("ROBOFLOW_API_KEY")
@@ -22,14 +21,6 @@ from roboflow import Roboflow
 rf = Roboflow(api_key=ROBOFLOW_API_KEY)
 project = rf.workspace().project("boxing-lelg6")
 model = project.version(3).model
-
-# Import models and routes
-import models, routes
-from routes import main as main_blueprint
-app.register_blueprint(main_blueprint)
-
-with app.app_context():
-    db.create_all()
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000)
