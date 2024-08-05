@@ -5,6 +5,11 @@ from extensions import db
 from dotenv import load_dotenv
 import os
 import models
+import routes
+
+# Load the environment variables
+load_dotenv()
+ROBOFLOW_API_KEY = os.environ.get("ROBOFLOW_API_KEY")
 
 def create_app():
     load_dotenv()
@@ -18,7 +23,7 @@ def create_app():
     with app.app_context():
         db.create_all()
     
-    ROBOFLOW_API_KEY = os.environ.get("ROBOFLOW_API_KEY")
+    ROKEYBOFLOW_API_ = os.environ.get("ROBOFLOW_API_KEY")
     if not ROBOFLOW_API_KEY:
         raise RuntimeError("ROBOFLOW_API_KEY environment variable is not set.")
     
@@ -27,6 +32,7 @@ def create_app():
     project = rf.workspace().project("boxing-lelg6")
     model = project.version(3).model
     
+
     from routes import main as main_blueprint
     app.register_blueprint(main_blueprint)
     
