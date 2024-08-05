@@ -70,7 +70,8 @@ def process_frame():
     data = request.json
     image = decode_image(data['image'])
     results = CLIENT.infer(image, model_id="boxing-lelg6/3")
-    return jsonify({'detections': results})
+    predictions = results.get('predictions', [])
+    return jsonify({'detections': predictions})
 
 @main.route('/fighter', methods=['POST'])
 def create_fighter():
